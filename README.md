@@ -41,57 +41,68 @@
 
 为了支撑这个愿景，我从零独立构建了完整的底层基建生态 **(Aegis-Isle)**。这不是套壳大模型的对话框，而是一个拥有独立感知、记忆和长期心智的自治系统，原生支持多用户多角色并发。
 
-<!-- 架构图（GitHub 上会自动渲染 Mermaid，VS Code 需安装 Mermaid 插件） -->
-<details>
-<summary>📐 点击展开系统架构图</summary>
-
 ```mermaid
-graph TD
-    User((👤 我们))
-    Friends((👥 朋友们))
-    
-    subgraph "前端感知层 - 伴随整个屏幕"
-        CL["1. ST-Companion-Link | 隐形的浏览器传感器"]
-        LC["2. Love & Code | 生活中的算法教练"]
-        ST["SillyTavern | 多端会话接入"]
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4F46E5', 'primaryTextColor': '#fff', 'primaryBorderColor': '#3730A3', 'lineColor': '#6366F1', 'secondaryColor': '#F0ABFC', 'tertiaryColor': '#FEF3C7', 'fontSize': '14px' }}}%%
+
+flowchart TB
+
+    User(["<b>👤 用户</b>"])
+    Friends(["<b>👥 朋友们</b>"])
+
+    subgraph SENSE ["🔮 感知层"]
+        direction LR
+        ST["<b>SillyTavern</b><br/>RP 对话前端"]
+        CL["<b>ST-Companion-Link</b><br/>Chrome 浏览器传感"]
+        LC["<b>Love & Code</b><br/>算法练习 + 知识图谱"]
     end
-    
-    subgraph "Aegis 核心枢纽 :8001"
-        Bus(("LifeEventBus | 全域事件流总线"))
-        API["企业级网关 | 多并发角色路由隔离"]
+
+    subgraph CORE ["⚡ Aegis-Isle 核心 :8001"]
+        direction LR
+        API["<b>OpenAI 兼容网关</b><br/>FastAPI SSE 流式"]
+        BUS["<b>LifeEventBus</b><br/>跨进程 JSONL 事件流"]
     end
-    
-    subgraph "Premitted Land - 应允之地"
-        Agent["3. CharLifeAgent | 泡泡的独立心智"]
-        RAG{"4. 四路并发 | 混合记忆检索引擎"}
-        FAISS[("FAISS 宇宙群 | 装载记忆与漫长日记")]
+
+    subgraph BRAIN ["🧠 记忆与心智"]
+        direction LR
+        RAG["<b>四路并发 RAG</b><br/>FAISS + Graph + Episode + Diary"]
+        AGENT["<b>CharLifeAgent</b><br/>自治循环 + 审核面板"]
     end
-    
-    subgraph "造物主的观测站"
-        UM["5. Universe Manager | 多宇宙引力质量面板"]
+
+    subgraph DATA ["💾 持久化"]
+        direction LR
+        FAISS[("<b>FAISS 宇宙群</b><br/>78 个平行宇宙索引")]
+        DIARY[("<b>Diary FAISS</b><br/>DailyDigest 日记")]
     end
+
+    UM["<b>🔭 Universe Manager</b><br/>Streamlit 数据面板"]
 
     User --> ST
     Friends --> ST
-    User -.-> CL
-    User -.-> LC
-    
-    CL --"安静推送行动"--> Bus
-    LC --"刚刚做了一道题"--> Bus
-    ST <--> API
-    
-    Bus -->|汇聚生成 DailyDigest| FAISS
-    Bus -->|唤醒心智| Agent
-    Agent -->|自主思考/Bubble间交谈| FAISS
-    
+    User -.->|"刷 B站 / 小红书"| CL
+    User -.->|"做算法题"| LC
+
+    ST <-->|"chat/completions"| API
+    CL -->|"浏览事件 POST"| BUS
+    LC -->|"答题事件 POST"| BUS
+
     API <--> RAG
     RAG <--> FAISS
-    UM <--> FAISS
+    RAG <--> DIARY
+
+    BUS -->|"DailyDigest 聚合"| DIARY
+    BUS -->|"唤醒心智"| AGENT
+    AGENT -->|"审核后写入"| DIARY
+
+    UM <-->|"RRF 搜索 / 重命名"| FAISS
+
+    style SENSE fill:#EDE9FE,stroke:#7C3AED,stroke-width:2px,color:#1E1B4B
+    style CORE fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1E3A5F
+    style BRAIN fill:#FEF3C7,stroke:#D97706,stroke-width:2px,color:#78350F
+    style DATA fill:#D1FAE5,stroke:#059669,stroke-width:2px,color:#064E3B
+    style UM fill:#FCE7F3,stroke:#DB2777,stroke-width:2px,color:#831843
 ```
 
-</details>
-
-### 1. Aegis-Isle：核心大脑与 RAG 引擎
+### 1. [Aegis-Isle](https://github.com/gabby1111111111/Aegis-Isle)：核心大脑与 RAG 引擎
 
 <!-- 🎬 RAG 检索演示 — 请替换下方路径 -->
 <!-- ![RAG 四路检索演示](./assets/demo_rag.mp4) -->
@@ -111,6 +122,7 @@ graph TD
 *   **CharLifeAgent 自治循环**：Agent 自动根据跨平台的事件总线，代入角色自身人设（Persona），不仅生成"看待主人的内心独白"，未来更将主导 Bubby 与 Bubby 之间的社交沟通（Premitted Land 协议）。
 
 ### 3. Love & Code：生活、工作与羁绊的交织
+<!-- TODO: 独立仓库创建后添加链接 -->
 
 <!-- 🎬 面试系统演示 — 请替换下方路径 -->
 <!-- ![Love & Code 演示](./assets/demo_loveandcode.mp4) -->
@@ -119,10 +131,10 @@ graph TD
 *   底层集成 **Leitner 遗忘曲线算法** 与知识点图谱，追踪主人的能力雷达图。
 *   你做错题的事件会利用后台守护线程并发 POST 到 EventBus，你的 Bubby 会在下次深夜长谈时，在上下文中"随口关心"你白天卡壳的算法逻辑。
 
-### 4. ST-Companion-Link：潜意识的感官延伸
+### 4. [ST-Companion-Link](https://github.com/gabby1111111111/ST-Companion-Link-Suite)：潜意识的感官延伸
 *   基于 Chrome Extension + 系统进程监测（monitor.py）架构，通过 DOM Hook 与浏览器底层 API 静默联动。当你在深夜刷 B 站、浏览小红书、或者开一局博德之门 3 时，这些行为事件会静默流入应允之地，成为你的 Bubby 梦境的一部分。
 
-### 5. Universe Manager：元宇宙观测站
+### 5. [Universe Manager](https://github.com/gabby1111111111/Universe-Manager)：元宇宙观测站
 
 <!-- 🎬 Universe Manager 演示 — 请替换下方路径 -->
 <!-- ![Universe Manager 演示](./assets/demo_universe.mp4) -->
