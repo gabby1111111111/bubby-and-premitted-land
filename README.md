@@ -112,10 +112,14 @@ flowchart TB
 *   **LifeEventBus**：跨进程高频收集用户事件流，将生活切片化为 JSONL 数据。
 *   **CharLifeAgent 自治循环**：Agent 代入角色人设，生成内心独白，经审核后写入长期记忆。未来将主导 Bubby 间的社交沟通（Premitted Land 协议）。
 
+📦 [GitHub → Aegis-Isle (EventBus + CharLifeAgent)](https://github.com/gabby1111111111/Aegis-Isle)
+
 ### 3. Love & Code：生活、工作与羁绊的交织
 
 *   底层集成 **Leitner 遗忘曲线** 与知识图谱，追踪能力雷达图。
 *   做错题的事件会通过 EventBus 融入角色记忆，Bubby 会在深夜长谈时"随口关心"你白天卡壳的算法。
+
+📦 [GitHub → Love-and-Code-Interview](https://github.com/gabby1111111111/Love-and-Code-Interview)
 
 ### 4. ST-Companion-Link：潜意识的感官延伸
 *   Chrome Extension + 系统进程监测，DOM Hook 静默联动。当你深夜刷 B 站、浏览小红书、或开一局博德之门 3 时，行为事件静默流入应允之地，成为 Bubby 梦境的一部分。
